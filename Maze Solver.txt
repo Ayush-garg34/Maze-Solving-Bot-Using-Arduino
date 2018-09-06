@@ -1,0 +1,118 @@
+
+    #define  M1_speed 10  
+    #define  M2_speed 11          
+    #define e1 8  
+    #define e2 9 
+    #define d1 12  
+    #define d2 7  
+ 
+    int Left_trigger = A4; 
+    int Left_echo = A5; 
+    
+    int Front_trigger = A2;
+    int Front_echo = A3;
+    
+    int trigger_right = A0;
+    int echo_right = A1;
+    int d = 15;
+    void setup()
+    {
+        pinMode(Left_trigger, OUTPUT); 
+        pinMode(Left_echo, INPUT);        
+        pinMode(Front_trigger, OUTPUT);
+        pinMode(Front_echo, INPUT);        
+        
+        pinMode(trigger_right, OUTPUT);
+        pinMode(echo_right, INPUT);
+       
+        pinMode( M1_speed, OUTPUT);
+        pinMode( M2_speed, OUTPUT);
+     
+        pinMode(e1, OUTPUT);
+        pinMode(e2, OUTPUT);
+        pinMode(d1, OUTPUT);
+        pinMode(d2, OUTPUT);       
+        delay(1000);
+        Serial.begin(9600);
+    }
+    
+    
+    void loop()
+    {
+     
+     long pulse_left, pulse_straight, pulse_right, right, straight, left; 
+     
+     
+     digitalWrite(Left_trigger, LOW); 
+     delayMicroseconds(2);              
+     digitalWrite(Left_trigger, HIGH);  
+     delayMicroseconds(5);              
+     digitalWrite(Left_trigger, LOW); 
+     pulse_left = pulseIn(Left_echo, HIGH); 
+     left = pulse_left/29/2;
+    
+     digitalWrite(Front_trigger, LOW);
+     delayMicroseconds(2);
+     digitalWrite(Front_trigger, HIGH);
+     delayMicroseconds(5);
+     digitalWrite(Front_trigger, LOW); 
+     pulse_straight = pulseIn(Front_echo, HIGH);
+     straight = pulse_straight/29/2;
+    
+     digitalWrite(trigger_right, LOW);
+     delayMicroseconds(2);
+     digitalWrite(trigger_right, HIGH);
+     delayMicroseconds(5);
+     digitalWrite(trigger_right, LOW); 
+     pulse_right = pulseIn(echo_right, HIGH);
+     right = pulse_right/29/2; 
+     
+     analogWrite( M1_speed, 255);
+     analogWrite( M2_speed, 200);
+     if (left>d){
+     analogWrite(e1, 0);             
+     analogWrite(e2, 0);               
+     analogWrite(d1,0);             
+     analogWrite(d2, 255);
+     delay(500);
+     Serial.println("Left");
+     }
+     else if (left<d && straight>d){
+      if (left<5){  analogWrite(e1, 0);         
+     analogWrite(e2, 255);          
+     analogWrite(d1, 0);             
+     analogWrite(d2, 0);
+     delay(500);}
+    else if (right<5){
+    analogWrite(e1, 0);             
+     analogWrite(e2, 0);               
+     analogWrite(d1,0);             
+     analogWrite(d2, 255);
+   delay(500);}
+    analogWrite(e1,0);        
+     analogWrite(e2,255);            
+     analogWrite(d1, 0);            
+     analogWrite(d2, 255);
+delay(500);
+Serial.println("Straight");
+     }
+     else if (left<d && straight<d && right>d){
+     analogWrite(e1, 0);         
+     analogWrite(e2, 255);          
+     analogWrite(d1, 0);             
+     analogWrite(d2, 0);
+delay(500);
+Serial.println("Right");}
+     else if (left<d && straight<d && right<d){
+     analogWrite(e1, 255);          
+     analogWrite(e2,0);               
+     analogWrite(d1,0);           
+     analogWrite(d2, 255);
+delay(500);
+Serial.println("U-Turn");}
+Serial.println(left);
+Serial.println(straight);
+Serial.println(right);}
+     
+     
+     
